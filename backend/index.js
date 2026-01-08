@@ -2781,3 +2781,5 @@ process.on('SIGTERM', () => {
 });
 
 module.exports = app;
+
+// Express middleware setup
