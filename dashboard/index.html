@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MantleForge | Agent Explorer</title>
+    <style>
+        /* Montreal Font Face Declarations - TTF Only */
+        @font-face {
+            font-family: 'Montreal';
+            src: url('/fonts/Montreal-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Montreal';
+            src: url('/fonts/Montreal-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* JetBrains Mono for code blocks */
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Mantle Explorer Theme */
+            --bg-page: #000000;
+            --bg-header: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #111111;
+            --accent: #c1ff00; /* Mantle Neon Green */
+            --accent-muted: rgba(193, 255, 0, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --text-muted: #555555;
+            --border: #1a1a1a;
+            --border-bright: #333333;
+            --success: #00ffa3;
+            --warning: #ffb800;
+            --danger: #ff4d4d;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: 'Montreal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout Structure */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            height: 70px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-header);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-section img {
+            height: 32px;
+            filter: grayscale(1) brightness(2);
+        }
+
+        .logo-section h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-section span {
+            color: var(--accent);
+            margin-left: 4px;
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Search/Hero Section */
+        .hero {
+            padding: 60px 0;
+            background: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #000000 100%);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .hero-content {
+            text-align: left;
+        }
+
+        .hero h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .search-container {
+            max-width: 800px;
+            position: relative;
+        }
+
+        .search-container select {
+            width: 100%;
+            height: 54px;
+            background: #111111;
+            border: 1px solid var(--border-bright);
+            border-radius: 8px;
+            padding: 0 20px;
+            color: white;
+            font-size: 16px;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .search-container select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-container::after {
+            content: '🔍';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        /* Main Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1000px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .panel-content {
+            padding: 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* List Items */
+        .list-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .list-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 1px solid var(--border-bright);
+        }
+
+        .item-main {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .item-side {
+            text-align: right;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-running { background: rgba(0, 255, 163, 0.1); color: var(--success); }
+        .badge-error { background: rgba(255, 77, 77, 0.1); color: var(--danger); }
+        .badge-deploying { background: rgba(255, 184, 0, 0.1); color: var(--warning); }
+
+        /* Tables */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #0f0f0f;
+            text-align: left;
+            padding: 16px 20px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        .address-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .address-link:hover {
+            text-decoration: underline;
+        }
+
+        /* View All Button */
+        .btn-view-all {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #0f0f0f;
+            color: var(--text-secondary);
+            text-align: center;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-top: 1px solid var(--border);
+            transition: color 0.2s;
+        }
+
+        .btn-view-all:hover {
+            color: var(--accent);
+            background: #111111;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-bright);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        /* Logs specific */
+        .log-line {
+            padding: 8px 20px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            white-space: pre-wrap;
+        }
+        .log-buy { color: var(--success); }
+        .log-hold { color: var(--text-secondary); }
+        .log-error { color: var(--danger); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <img src="/logo.png" alt="MantleForge">
+            <h1>Mantle<span>Forge</span> Explorer</h1>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="app-container">
+            <div class="hero-content">
+                <h2>Git-Native AI Agent Deployment Platform</h2>
+                <div class="search-container">
+                    <select id="repoFilter" onchange="filterByRepo()">
+                        <option value="">Filter by Repository...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="app-container">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-label">
+                    <span>TRANSACTIONS</span>
+                </div>
+                <div class="stat-value" id="totalDecisions">0</div>
+                <div class="stat-sub" id="successRate">0.0% TPS</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <span>ACTIVE AGENTS</span>
+                </div>
+                <div class="stat-value" id="activeAgentsCount">0</div>
+                <div class="stat-sub">Live on Mantle</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <span>BUY SIGNALS</span>
+                </div>
+                <div class="stat-value" id="buyCount">0</div>
+                <div class="stat-sub" style="color: var(--success)">Growth +12.5%</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <span>NETWORK STATUS</span>
+                </div>
+                <div class="stat-value"><span class="live-dot"></span>Healthy</div>
+                <div class="stat-sub">Latency: 45ms</div>
+            </div>
+        </div>
+
+        <!-- Main Activity Feeds -->
+        <div class="dashboard-grid">
+            <!-- Latest Agents -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Latest Agents</h3>
+                </div>
+                <div class="panel-content" id="agentList">
+                    <!-- Loaded dynamically -->
+                </div>
+                <a href="#" class="btn-view-all" onclick="loadAgents()">Refresh Agents List</a>
+            </div>
+
+            <!-- Latest Decisions -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Latest Trades</h3>
+                </div>
+                <div class="panel-content" id="tradesContainer">
+                    <!-- Loaded dynamically -->
+                </div>
+                <a href="#" class="btn-view-all" onclick="loadTrades()">View All Transactions</a>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="panel" style="margin-bottom: 60px;">
+            <div class="panel-header">
+                <h3>Strategy Performance Comparison</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Strategy / Branch</th>
+                            <th>Address</th>
+                            <th>Decisions</th>
+                            <th>Trades</th>
+                            <th>Win Rate</th>
+                            <th>Avg Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTable">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- System Logs (Console Style) -->
+        <div class="panel" style="margin-bottom: 100px;">
+            <div class="panel-header">
+                <h3>System Terminal Logs</h3>
+            </div>
+            <div class="panel-content" id="logsContainer" style="background: #000; height: 300px;">
+                <div class="log-line">Initializing MantleForge shell...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? `http://${window.location.hostname}:3005`
+            : 'https://mantle-git-agent.onrender.com';
+        
+        let selectedAgentId = null;
+        let allAgents = [];
+        let selectedRepoUrl = '';
+
+        // Helper: Format Address
+        function formatAddress(addr) {
+            if (!addr) return '0x00...000';
+            return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
+        }
+
+        // Load Repositories
+        async function loadRepositories() {
+            try {
+                const response = await fetch(`${API_BASE}/api/agents`);
+                const data = await response.json();
+                const repos = [...new Set(data.agents.map(a => a.repo_url))];
+                const filter = document.getElementById('repoFilter');
+                filter.innerHTML = '<option value="">Filter by Repository...</option>';
+                repos.forEach(repo => {
+                    const opt = document.createElement('option');
+                    opt.value = repo;
+                    opt.textContent = repo.split('/').pop().replace('.git', '');
+                    filter.appendChild(opt);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Filter Action
+        function filterByRepo() {
+            selectedRepoUrl = document.getElementById('repoFilter').value;
+            displayAgents(allAgents);
+        }
+
+        // Display Agents List
+        function displayAgents(agents) {
+            const list = document.getElementById('agentList');
+            let filtered = agents;
+            if (selectedRepoUrl) filtered = agents.filter(a => a.repo_url === selectedRepoUrl);
+            
+            document.getElementById('activeAgentsCount').textContent = filtered.length;
+
+            list.innerHTML = filtered.map(a => `
+                <div class="list-item" onclick="selectAgent('${a.branch_hash}')">
+                    <div class="item-icon">🤖</div>
+                    <div class="item-main">
+                        <div class="item-title">${a.branch_name}</div>
+                        <div class="item-subtitle">${a.repo_url.split('/').pop()}</div>
+                    </div>
+                    <div class="item-side">
+                        <div class="badge badge-${a.status}">${a.status}</div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Updated Just Now</div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (filtered.length > 0 && !selectedAgentId) selectAgent(filtered[0].branch_hash);
+        }
+
+        async function loadAgents() {
+            try {
+                const r = await fetch(`${API_BASE}/api/agents`);
+                const data = await r.json();
+                allAgents = data.agents || [];
+                displayAgents(allAgents);
+                loadComparison();
+            } catch (e) { console.error(e); }
+        }
+
+        function selectAgent(hash) {
+            selectedAgentId = hash;
+            loadStats();
+            loadLogs();
+            loadTrades();
+        }
+
+        async function loadStats() {
+            if (!selectedAgentId) return;
+            try {
+                const r = await fetch(`${API_BASE}/api/stats/${selectedAgentId}`);
+                const data = await r.json();
+                if (data.stats) {
+                    const s = data.stats;
+                    document.getElementById('totalDecisions').textContent = s.total_decisions || 0;
+                    document.getElementById('buyCount').textContent = s.buy_count || 0;
+                    const rate = s.total_decisions ? ((s.trades_executed || 0) / s.total_decisions * 100).toFixed(1) : '0.0';
+                    document.getElementById('successRate').textContent = rate + '% WR';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadTrades() {
+            if (!selectedAgentId) return;
+            const container = document.getElementById('tradesContainer');
+            try {
+                const r = await fetch(`${API_BASE}/api/trades/${selectedAgentId}`);
+                const data = await r.json();
+                if (data.trades && data.trades.length > 0) {
+                    container.innerHTML = data.trades.map(t => `
+                        <div class="list-item">
+                            <div class="item-icon">💸</div>
+                            <div class="item-main">
+                                <div class="item-title" style="color: var(--success)">TX: ${formatAddress(t.trade_tx_hash)}</div>
+                                <div class="item-subtitle">Price: $${t.price.toFixed(4)}</div>
+                            </div>
+                            <div class="item-side">
+                                <a href="https://sepolia.mantlescan.xyz/tx/${t.trade_tx_hash}" target="_blank" class="address-link">View Tx</a>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">No transactions recorded.</div>';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadLogs() {
+            if (!selectedAgentId) return;
+            const container = document.getElementById('logsContainer');
+            try {
+                const r = await fetch(`${API_BASE}/api/logs/${selectedAgentId}`);
+                const data = await r.json();
+                if (data.logs) {
+                    container.innerHTML = data.logs.slice(-50).map(l => {
+                        let cls = '';
+                        if (l.includes('BUY')) cls = 'log-buy';
+                        if (l.includes('HOLD')) cls = 'log-hold';
+                        if (l.includes('Error')) cls = 'log-error';
+                        return `<div class="log-line ${cls}">${l}</div>`;
+                    }).join('');
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadComparison() {
+            const table = document.getElementById('comparisonTable');
+            try {
+                const results = await Promise.all(allAgents.slice(0, 10).map(async a => {
+                    const r = await fetch(`${API_BASE}/api/stats/${a.branch_hash}`).then(res => res.json()).catch(() => ({}));
+                    return { agent: a, stats: r.stats || {} };
+                }));
+
+                table.innerHTML = results.map(res => {
+                    const s = res.stats;
+                    const wr = s.total_decisions ? ((s.trades_executed || 0) / s.total_decisions * 100).toFixed(1) : '0.0';
+                    return `
+                        <tr>
+                            <td><strong>${res.agent.branch_name}</strong></td>
+                            <td><a href="https://sepolia.mantlescan.xyz/address/${res.agent.agent_address}" target="_blank" class="address-link">${formatAddress(res.agent.agent_address)}</a></td>
+                            <td>${s.total_decisions || 0}</td>
+                            <td>${s.trades_executed || 0}</td>
+                            <td style="color: var(--accent)">${wr}%</td>
+                            <td>$${(s.avg_price || 0).toFixed(4)}</td>
+                            <td><span class="badge badge-${res.agent.status}">${res.agent.status}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // Init
+        loadRepositories();
+        loadAgents();
+
+        // Intervals
+        setInterval(() => {
+            if (selectedAgentId) {
+                loadStats();
+                loadLogs();
+                loadTrades();
+            }
+        }, 5000);
+        
+        setInterval(loadAgents, 15000);
+    </script>
+</body>
+</html>
