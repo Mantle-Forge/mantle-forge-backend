@@ -232,3 +232,5 @@ setInterval(() => {
 }, 5000);
 ```
 
+
+<!-- Updated documentation -->

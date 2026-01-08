@@ -94,3 +94,5 @@ console.log(chalk.cyan('  git agent secrets set GROQ_API_KEY=your-key-here'));
 console.log(chalk.cyan('  git push  # This will deploy your agent!'));
 console.log('');
 console.log(chalk.green('Happy coding! 🚀'));
+
+// CLI tool

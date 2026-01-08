@@ -194,3 +194,13 @@ initializeDatabase()
 
 
 // Updated 2026-01-08
+
+// Status tracking
+
+// Branch hash lookup
+
+// OAuth token storage
+
+// Metrics table
+
+// Database indexes

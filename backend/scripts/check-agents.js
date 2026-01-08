@@ -79,3 +79,5 @@ checkAndFixAgents().then(() => {
   process.exit(1);
 });
 
+
+// Status check script

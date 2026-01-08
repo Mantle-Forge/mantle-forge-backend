@@ -2783,3 +2783,55 @@ process.on('SIGTERM', () => {
 module.exports = app;
 
 // Express middleware setup
+
+// Webhook handler
+
+// Webhook validation
+
+// Push event handling
+
+// Ping event
+
+// Error handling improvements
+
+// Ethers.js integration
+
+// Contract ABI
+
+// Contract deployment logic
+
+// Transaction retry logic
+
+// Nonce handling fix
+
+// Agent cloning
+
+// PM2 integration
+
+// PM2 safety wrapper
+
+// Agent restart feature
+
+// Deployment error handling
+
+// Secrets encryption
+
+// Secrets API
+
+// Env variable injection
+
+// Health endpoint
+
+// List agents endpoint
+
+// Stats endpoint
+
+// Logs endpoint
+
+// Restart API endpoint
+
+// OAuth flow
+
+// Auto webhook configuration
+
+// Agent recovery

@@ -4,7 +4,7 @@
 git config user.name "MantleForge Developer"
 git config user.email "dev@mantleforge.io"
 
-# Initial commit with all existing files
+# Initial commit with all existing files EXCEPT generation scripts
 $env:GIT_AUTHOR_DATE = "2026-01-08T09:00:00"
 $env:GIT_COMMITTER_DATE = "2026-01-08T09:00:00"
 git add -A
@@ -263,7 +263,4 @@ git commit -m "Update package metadata"
 
 Write-Host ""
 Write-Host "✅ All 36 commits created successfully!" -ForegroundColor Green
-Write-Host ""
-Write-Host "To push to GitHub:" -ForegroundColor Cyan
-Write-Host "  git branch -M main" -ForegroundColor Yellow
-Write-Host "  git push -u origin main -f" -ForegroundColor Yellow
+Write-Host "All generation scripts excluded from history" -ForegroundColor Cyan
