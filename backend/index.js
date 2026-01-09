@@ -2845,3 +2845,5 @@ module.exports = app;
 // Push event handling
 
 // Ping event
+
+// Error handling improvements
