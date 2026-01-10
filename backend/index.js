@@ -2849,3 +2849,5 @@ module.exports = app;
 // Error handling improvements
 
 // Ethers.js integration
+
+// Contract ABI
