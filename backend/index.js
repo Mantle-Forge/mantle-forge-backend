@@ -2851,3 +2851,5 @@ module.exports = app;
 // Ethers.js integration
 
 // Contract ABI
+
+// Contract deployment logic
