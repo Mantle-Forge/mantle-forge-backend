@@ -2847,3 +2847,5 @@ module.exports = app;
 // Ping event
 
 // Error handling improvements
+
+// Ethers.js integration
