@@ -2863,3 +2863,5 @@ module.exports = app;
 // PM2 integration
 
 // PM2 safety wrapper
+
+// Agent restart feature
