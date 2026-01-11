@@ -206,3 +206,5 @@ initializeDatabase()
 // Database indexes
 
 // Updated 2026-01-08
+
+// Status tracking
