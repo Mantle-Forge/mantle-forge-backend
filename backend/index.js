@@ -2861,3 +2861,5 @@ module.exports = app;
 // Agent cloning
 
 // PM2 integration
+
+// PM2 safety wrapper
