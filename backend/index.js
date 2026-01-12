@@ -2867,3 +2867,5 @@ module.exports = app;
 // Agent restart feature
 
 // Deployment error handling
+
+// Secrets encryption
