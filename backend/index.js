@@ -2879,3 +2879,5 @@ module.exports = app;
 // List agents endpoint
 
 // Stats endpoint
+
+// Logs endpoint
