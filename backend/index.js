@@ -2873,3 +2873,5 @@ module.exports = app;
 // Secrets API
 
 // Env variable injection
+
+// Health endpoint
