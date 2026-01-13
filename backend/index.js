@@ -2875,3 +2875,5 @@ module.exports = app;
 // Env variable injection
 
 // Health endpoint
+
+// List agents endpoint
