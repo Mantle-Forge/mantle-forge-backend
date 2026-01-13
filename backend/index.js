@@ -2881,3 +2881,5 @@ module.exports = app;
 // Stats endpoint
 
 // Logs endpoint
+
+// Restart API endpoint
