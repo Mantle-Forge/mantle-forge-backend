@@ -2877,3 +2877,5 @@ module.exports = app;
 // Health endpoint
 
 // List agents endpoint
+
+// Stats endpoint
