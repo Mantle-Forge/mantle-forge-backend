@@ -214,3 +214,5 @@ initializeDatabase()
 // OAuth token storage
 
 // Metrics table
+
+// Database indexes
