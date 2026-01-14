@@ -212,3 +212,5 @@ initializeDatabase()
 // Branch hash lookup
 
 // OAuth token storage
+
+// Metrics table
