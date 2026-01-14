@@ -2883,3 +2883,5 @@ module.exports = app;
 // Logs endpoint
 
 // Restart API endpoint
+
+// OAuth flow
