@@ -15,6 +15,7 @@ Thnk of it as **Vercel for On-chain Agents**. Deploy autonomous AI agents to Man
 - **[mantle-forge](https://github.com/Mantle-Forge/mantle-forge)** — CLI package repository
 - **[mantle-forge-backend](https://github.com/Mantle-Forge/mantle-forge-backend)** — Backend server, dashboard, and agent templates
 - **[mantle-forge-contracts](https://github.com/Mantle-Forge/mantle-forge-contracts)** — Smart contracts (AgentFactory.sol, Agent.sol)
+- **[mantle-agent-template](https://github.com/Mantle-Forge/mantle-agent-template)** — Demo Trading Agent Template
 
 ### Platform & Tools
 - **[NPM Package](https://www.npmjs.com/package/mantle-forge)** — Install the CLI tool
@@ -483,8 +484,8 @@ npx mantle-forge --help
 #### Step 2: Clone Agent Template
 
 ```bash
-git clone https://github.com/Mantle-Forge/mantle-forge-backend.git
-cd mantle-forge-backend
+git clone https://github.com/Mantle-Forge/mantle-agent-template.git
+cd mantle-agent-template
 npx mantle-forge init
 ```
 
@@ -628,7 +629,7 @@ Each agent contract supports:
 # 1. Install CLI
 npm install -g mantle-forge
 
-# 2. Clone backend repository (contains agent template)
+# 2. Clone agent template repository
 git clone https://github.com/Mantle-Forge/mantle-forge-backend.git
 cd mantle-forge-backend
 
