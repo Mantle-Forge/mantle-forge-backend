@@ -55,6 +55,469 @@ Each Git push automatically triggers the deployment of a new smart contract on M
 
 ---
 
+# 🏗️ MantleForge System Architecture
+
+Complete system diagram covering all components, data flows, and interactions in the MantleForge platform.
+
+## 📊 Complete System Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "👤 Developer Layer"
+        DEV[Developer]
+        CLI[mantle-forge CLI<br/>npm package]
+        GIT[Git Repository<br/>GitHub/GitLab]
+        DASH[Web Dashboard<br/>Real-time Monitoring]
+    end
+
+    subgraph "🔗 GitHub Integration"
+        WEBHOOK[GitHub Webhooks<br/>Push Events]
+        OAUTH[GitHub OAuth<br/>Auto Webhook Setup]
+    end
+
+    subgraph "🌐 Backend Server (Node.js/Express)"
+        API[REST API<br/>/api/* endpoints]
+        WH[Webhook Handler<br/>/webhook/github]
+        DB[(SQLite Database<br/>Agents & Secrets)]
+        PM2[PM2 Process Manager<br/>Agent Lifecycle]
+        CRYPTO[Encryption Service<br/>AES-256 Secrets]
+        AGENTS_DIR[Agents Directory<br/>Cloned Repositories]
+    end
+
+    subgraph "⛓️ Mantle Blockchain Layer"
+        MANTLE[Mantle Sepolia Testnet<br/>Chain ID: 5003]
+        FACTORY[AgentFactory.sol<br/>Factory Contract]
+        AGENT_CONTRACT[Agent.sol<br/>Per Branch Contract]
+        DEX[Uniswap V3 Router<br/>DEX Integration]
+    end
+
+    subgraph "🤖 Agent Execution Layer"
+        AGENT_PROC[Agent Process<br/>TypeScript Runtime]
+        AI[Groq LLM API<br/>AI Decision Making]
+        PRICE[CoinGecko API<br/>Price Feed]
+        TRADE[Trade Executor<br/>DEX Swaps]
+    end
+
+    subgraph "📊 Monitoring & Metrics"
+        METRICS[Metrics Collection<br/>Decisions & Trades]
+        LOGS[Log Aggregation<br/>PM2 Logs]
+        EXPLORER[Mantle Explorer<br/>Transaction Viewing]
+    end
+
+    %% Developer interactions
+    DEV -->|git push| GIT
+    DEV -->|mantle-forge commands| CLI
+    DEV -->|View dashboard| DASH
+
+    %% CLI interactions
+    CLI -->|API calls| API
+    CLI -->|Read config| GIT
+
+    %% Git workflow
+    GIT -->|Push event| WEBHOOK
+    GIT -->|OAuth flow| OAUTH
+
+    %% Webhook flow
+    WEBHOOK -->|POST /webhook/github| WH
+    OAUTH -->|Auto configure| WEBHOOK
+
+    %% Backend processing
+    WH -->|Deploy contract| FACTORY
+    WH -->|Clone repo| AGENTS_DIR
+    WH -->|Store agent| DB
+    WH -->|Start process| PM2
+
+    %% API endpoints
+    API -->|Query| DB
+    API -->|Manage| PM2
+    API -->|Encrypt/Decrypt| CRYPTO
+    API -->|Serve data| DASH
+
+    %% Database operations
+    DB -->|Store| AGENTS_DIR
+    CRYPTO -->|Encrypted storage| DB
+
+    %% Process management
+    PM2 -->|Start/Stop| AGENT_PROC
+    PM2 -->|Logs| LOGS
+
+    %% Agent execution
+    AGENT_PROC -->|Fetch price| PRICE
+    AGENT_PROC -->|AI decision| AI
+    AGENT_PROC -->|Execute trade| TRADE
+    AGENT_PROC -->|Send metrics| METRICS
+    AGENT_PROC -->|Write logs| LOGS
+
+    %% Blockchain interactions
+    FACTORY -->|Deploy| AGENT_CONTRACT
+    AGENT_PROC -->|Read contract| AGENT_CONTRACT
+    TRADE -->|Execute via contract| AGENT_CONTRACT
+    AGENT_CONTRACT -->|Call router| DEX
+    DEX -->|Swap tokens| MANTLE
+
+    %% Monitoring
+    METRICS -->|Store| DB
+    LOGS -->|Query| API
+    TRADE -->|TX hash| EXPLORER
+    AGENT_CONTRACT -->|View on-chain| EXPLORER
+
+    %% External services
+    PRICE -.->|HTTP API| PRICE
+    AI -.->|HTTP API| AI
+    DEX -.->|Smart Contract| DEX
+
+    style DEV fill:#e1f5ff
+    style CLI fill:#fff4e1
+    style DASH fill:#fff4e1
+    style API fill:#e8f5e9
+    style DB fill:#f3e5f5
+    style PM2 fill:#e8f5e9
+    style FACTORY fill:#fff9c4
+    style AGENT_CONTRACT fill:#fff9c4
+    style AGENT_PROC fill:#ffebee
+    style AI fill:#e3f2fd
+    style PRICE fill:#e3f2fd
+    style DEX fill:#fff9c4
+    style MANTLE fill:#fff9c4
+```
+
+## 🔄 Complete Data Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Git as GitHub
+    participant WH as Webhook Handler
+    participant API as Backend API
+    participant DB as Database
+    participant BC as Blockchain
+    participant Agent as Agent Process
+    participant AI as Groq API
+    participant DEX as DEX Router
+
+    Note over Dev,DEX: 1. Initialization Phase
+    Dev->>Git: git push origin main
+    Git->>WH: Webhook Event (push)
+    WH->>BC: Deploy Agent Contract
+    BC-->>WH: Contract Address
+    WH->>DB: Store Agent Info
+    WH->>Git: Clone Repository
+    WH->>Agent: Start Process (PM2)
+    
+    Note over Dev,DEX: 2. Secret Management
+    Dev->>API: mantle-forge secrets set KEY=VALUE
+    API->>DB: Encrypt & Store Secret
+    DB-->>API: Success
+    API-->>Dev: Secret saved
+    
+    Note over Dev,DEX: 3. Agent Execution Loop (Every 30s)
+    loop Every 30 seconds
+        Agent->>AI: Get Price (CoinGecko)
+        AI-->>Agent: Current Price
+        Agent->>AI: AI Decision Request
+        AI-->>Agent: BUY or HOLD
+        alt BUY Decision
+            Agent->>Agent: Transfer tokens to contract
+            Agent->>BC: Approve router (via contract)
+            Agent->>BC: Execute swap (via contract.execute)
+            BC->>DEX: Call router.exactInputSingle
+            DEX-->>BC: Swap executed
+            BC-->>Agent: Transaction hash
+            Agent->>API: Send metrics (trade executed)
+        else HOLD Decision
+            Agent->>API: Send metrics (hold)
+        end
+        API->>DB: Store metrics
+    end
+    
+    Note over Dev,DEX: 4. Monitoring
+    Dev->>API: mantle-forge stats
+    API->>DB: Query metrics
+    DB-->>API: Agent statistics
+    API-->>Dev: Display stats
+    
+    Dev->>API: mantle-forge logs
+    API->>Agent: Query PM2 logs
+    Agent-->>API: Recent logs
+    API-->>Dev: Display logs
+```
+
+## 🏛️ Component Architecture
+
+```mermaid
+graph LR
+    subgraph "Frontend Components"
+        A[Dashboard UI<br/>HTML/CSS/JS]
+        B[Landing Page<br/>OAuth Setup]
+    end
+
+    subgraph "CLI Tool (mantle-forge)"
+        C[init<br/>Initialize repo]
+        D[secrets<br/>Manage secrets]
+        E[stats<br/>View metrics]
+        F[logs<br/>View logs]
+        G[restart<br/>Restart agent]
+        H[compare<br/>Compare branches]
+    end
+
+    subgraph "Backend Services"
+        I[Express Server<br/>REST API]
+        J[Webhook Handler<br/>GitHub Events]
+        K[Database Layer<br/>SQLite]
+        L[PM2 Manager<br/>Process Control]
+        M[Encryption<br/>AES-256]
+    end
+
+    subgraph "Smart Contracts"
+        N[AgentFactory.sol<br/>Factory Pattern]
+        O[Agent.sol<br/>Per Branch]
+    end
+
+    subgraph "Agent Runtime"
+        P[TypeScript Agent<br/>agent.ts]
+        Q[AI Decision Loop<br/>30s interval]
+        R[Trade Executor<br/>DEX Integration]
+    end
+
+    subgraph "External APIs"
+        S[Groq API<br/>LLM]
+        T[CoinGecko<br/>Price Feed]
+        U[Uniswap V3<br/>DEX Router]
+    end
+
+    A --> I
+    B --> I
+    C --> I
+    D --> I
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    
+    I --> J
+    I --> K
+    I --> L
+    I --> M
+    
+    J --> N
+    N --> O
+    
+    L --> P
+    P --> Q
+    P --> R
+    
+    Q --> S
+    Q --> T
+    R --> O
+    R --> U
+    O --> U
+```
+
+## 📦 System Components Overview
+
+### 1. **Developer Layer**
+- **mantle-forge CLI**: npm package for managing agents
+- **Git Repository**: Source code version control
+- **Web Dashboard**: Real-time monitoring interface
+
+### 2. **GitHub Integration**
+- **Webhooks**: Automatic deployment triggers
+- **OAuth**: Automated webhook configuration
+
+### 3. **Backend Server**
+- **REST API**: `/api/agents`, `/api/secrets`, `/api/metrics`, `/api/logs`
+- **Webhook Handler**: Processes GitHub push events
+- **SQLite Database**: Stores agents, secrets, and metrics
+- **PM2 Manager**: Process lifecycle management
+- **Encryption Service**: AES-256 secret encryption
+
+### 4. **Blockchain Layer (Mantle Sepolia)**
+- **AgentFactory.sol**: Factory contract for deploying agents
+- **Agent.sol**: Individual agent contracts (one per branch)
+- **Uniswap V3 Router**: DEX integration for token swaps
+
+### 5. **Agent Execution**
+- **TypeScript Runtime**: Runs agent.ts code
+- **AI Decision Loop**: 30-second interval decision making
+- **Trade Executor**: Executes swaps via agent contract
+
+### 6. **External Services**
+- **Groq API**: LLM for AI decision making
+- **CoinGecko API**: Real-time price feeds
+- **Mantle Explorer**: Blockchain transaction viewing
+
+## 🔐 Security Architecture
+
+```mermaid
+graph TB
+    subgraph "Secret Management Flow"
+        A[Developer sets secret<br/>mantle-forge secrets set]
+        B[CLI sends to API<br/>POST /api/secrets]
+        C[Backend encrypts<br/>AES-256]
+        D[Store in DB<br/>encrypted_value]
+        E[Agent starts]
+        F[Backend decrypts]
+        G[Inject as env var<br/>PM2 environment]
+        H[Agent reads<br/>process.env.KEY]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    E --> F
+    F --> G
+    G --> H
+
+    style C fill:#ffebee
+    style D fill:#ffebee
+    style F fill:#e8f5e9
+```
+
+## 🔄 Deployment Flow
+
+```mermaid
+graph TD
+    A[Developer: git push] --> B[GitHub: Push Event]
+    B --> C[Backend: Webhook Received]
+    C --> D{Agent Exists?}
+    D -->|No| E[Deploy Agent Contract]
+    D -->|Yes| F[Update Existing]
+    E --> G[Get Contract Address]
+    F --> G
+    G --> H[Clone/Pull Repository]
+    H --> I[Install Dependencies]
+    I --> J[Load Secrets from DB]
+    J --> K[Decrypt Secrets]
+    K --> L[Start Agent Process PM2]
+    L --> M[Agent Running]
+    M --> N[Agent Makes Decisions]
+    N --> O[Execute Trades]
+    O --> P[Send Metrics to Backend]
+    P --> Q[Update Dashboard]
+```
+
+## 📊 Database Schema
+
+```mermaid
+erDiagram
+    AGENTS ||--o{ SECRETS : has
+    AGENTS ||--o{ METRICS : generates
+    
+    AGENTS {
+        int id PK
+        string repo_url
+        string branch_name
+        string branch_hash UK
+        string agent_address
+        string status
+        int pid
+        datetime created_at
+        datetime updated_at
+    }
+    
+    SECRETS {
+        int id PK
+        int agent_id FK
+        string branch_hash
+        string key
+        string encrypted_value
+        datetime created_at
+        datetime updated_at
+    }
+    
+    METRICS {
+        int id PK
+        int agent_id FK
+        string decision
+        float price
+        boolean trade_executed
+        string trade_tx_hash
+        float trade_amount
+        datetime created_at
+    }
+```
+
+## 🌐 Network Architecture
+
+```mermaid
+graph TB
+    subgraph "Internet"
+        DEV[Developer Machine]
+        GITHUB[GitHub.com]
+        RENDER[Render.com<br/>Backend Hosting]
+    end
+
+    subgraph "Mantle Sepolia Network"
+        RPC[Mantle RPC<br/>rpc.sepolia.mantle.xyz]
+        FACTORY[AgentFactory Contract]
+        AGENTS[Agent Contracts<br/>One per branch]
+        DEX_ROUTER[Uniswap V3 Router]
+    end
+
+    subgraph "External APIs"
+        GROQ[Groq API<br/>LLM Service]
+        COINGECKO[CoinGecko API<br/>Price Data]
+    end
+
+    DEV -->|git push| GITHUB
+    DEV -->|CLI commands| RENDER
+    GITHUB -->|Webhooks| RENDER
+    RENDER -->|Deploy contracts| RPC
+    RENDER -->|Query contracts| RPC
+    RPC --> FACTORY
+    FACTORY --> AGENTS
+    AGENTS --> DEX_ROUTER
+    
+    RENDER -->|AI requests| GROQ
+    RENDER -->|Price requests| COINGECKO
+```
+
+## 🎯 Key Data Flows
+
+### 1. **Agent Deployment Flow**
+```
+Git Push → GitHub Webhook → Backend → Deploy Contract → Clone Repo → Start Process
+```
+
+### 2. **Secret Management Flow**
+```
+CLI → API → Encrypt → Database → Decrypt → Inject → Agent Process
+```
+
+### 3. **Trading Execution Flow**
+```
+Price Feed → AI Decision → Transfer Tokens → Approve Router → Execute Swap → Record Metrics
+```
+
+### 4. **Monitoring Flow**
+```
+Agent Metrics → Backend API → Database → Dashboard/CLI
+```
+
+## 📈 Scalability Architecture
+
+- **Horizontal Scaling**: Multiple backend instances can run in parallel
+- **Database**: SQLite (can be migrated to PostgreSQL for production)
+- **Process Management**: PM2 handles multiple agent processes
+- **Blockchain**: Each branch = separate contract (unlimited parallel agents)
+- **Stateless API**: Backend can scale horizontally
+
+## 🔒 Security Features
+
+1. **Secret Encryption**: AES-256 encryption for all secrets
+2. **On-Chain Identity**: Agent contracts provide immutable identity
+3. **Access Control**: Only contract owner can execute trades
+4. **Webhook Verification**: GitHub webhook signature validation
+5. **OAuth Security**: Secure GitHub OAuth flow
+
+---
+
+**Last Updated**: 2026-01-15  
+**Version**: 1.0.2  
+**Maintained by**: MantleForge Team
+
+
+
 ## Features
 
 ### Git Push to Deploy
