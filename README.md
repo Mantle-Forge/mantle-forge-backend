@@ -494,30 +494,6 @@ Price Feed → AI Decision → Transfer Tokens → Approve Router → Execute Sw
 Agent Metrics → Backend API → Database → Dashboard/CLI
 ```
 
-## 📈 Scalability Architecture
-
-- **Horizontal Scaling**: Multiple backend instances can run in parallel
-- **Database**: SQLite (can be migrated to PostgreSQL for production)
-- **Process Management**: PM2 handles multiple agent processes
-- **Blockchain**: Each branch = separate contract (unlimited parallel agents)
-- **Stateless API**: Backend can scale horizontally
-
-## 🔒 Security Features
-
-1. **Secret Encryption**: AES-256 encryption for all secrets
-2. **On-Chain Identity**: Agent contracts provide immutable identity
-3. **Access Control**: Only contract owner can execute trades
-4. **Webhook Verification**: GitHub webhook signature validation
-5. **OAuth Security**: Secure GitHub OAuth flow
-
----
-
-**Last Updated**: 2026-01-15  
-**Version**: 1.0.2  
-**Maintained by**: MantleForge Team
-
-
-
 ## Features
 
 ### Git Push to Deploy
