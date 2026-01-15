@@ -96,3 +96,5 @@ console.log('');
 console.log(chalk.green('Happy coding! 🚀'));
 
 // CLI tool
+
+// CLI tool
