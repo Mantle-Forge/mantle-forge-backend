@@ -22,8 +22,8 @@ Thnk of it as **Vercel for On-chain Agents**. Deploy autonomous AI agents to Man
 - **[Live Dashboard](https://mantle-git-agent.onrender.com/dashboard)** — Monitor deployed agents
 
 ### Media & Documentation
-- **[Demo Video](#)** — Watch the platform in action
-- **[Pitch Video](#)** — Product pitch presentation
+- **[Demo Video](https://www.hackquest.io/projects/MantleForge)** — Watch the platform in action
+- **[Pitch Video](https://www.hackquest.io/projects/MantleForge)** — Product pitch presentation
 - **[Pitch Deck](https://www.canva.com/design/DAG-e0fPpHo/zISCphZMJLZ9s9XChzAR-w/view?utm_content=DAG-e0fPpHo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h81d5a0197d)** — Presentation slides
 
 ---
