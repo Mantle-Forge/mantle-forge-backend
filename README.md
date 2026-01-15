@@ -2,9 +2,10 @@
 
 <div align="center">
 
-<img width="500" height="500" alt="Gemini_Generated_Image_w7155sw7155sw715-removebg-preview" src="https://github.com/user-attachments/assets/04728f62-c968-43cb-8923-d06973965bea" />
+<img width="622" height="601" alt="Screenshot 2026-01-15 at 4 23 20 PM" src="https://github.com/user-attachments/assets/3c794173-02cb-4773-a407-5c9197c421b8" />
 
 </div>
+
 
 Thnk of it as **Vercel for On-chain Agents**. Deploy autonomous AI agents to Mantle blockchain with a single `git push`. Each branch deploys as a unique smart contract, Enabling truly parallel A/B Testing of Agent Contract Functionalities.
 
