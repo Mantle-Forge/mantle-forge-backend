@@ -1,6 +1,12 @@
-# MantleForge: An On-Chain Agent Deployment and A/B Testing Platform
+# MantleForge
 
-Think of it as Vercel for On-chain Agents. Deploy autonomous AI agents to Mantle blockchain with a single `git push`. Each branch deploys as a unique smart contract.
+<div align="center">
+
+<img width="500" height="500" alt="Gemini_Generated_Image_w7155sw7155sw715-removebg-preview" src="https://github.com/user-attachments/assets/04728f62-c968-43cb-8923-d06973965bea" />
+
+</div>
+
+Thnk of it as **Vercel for On-chain Agents**. Deploy autonomous AI agents to Mantle blockchain with a single `git push`. Each branch deploys as a unique smart contract, Enabling truly parallel A/B Testing of Agent Contract Functionalities.
 
 ## Important Links
 
