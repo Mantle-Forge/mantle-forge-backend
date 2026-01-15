@@ -346,56 +346,6 @@ graph LR
 - **CoinGecko API**: Real-time price feeds
 - **Mantle Explorer**: Blockchain transaction viewing
 
-## 🔐 Security Architecture
-
-```mermaid
-graph TB
-    subgraph "Secret Management Flow"
-        A[Developer sets secret<br/>mantle-forge secrets set]
-        B[CLI sends to API<br/>POST /api/secrets]
-        C[Backend encrypts<br/>AES-256]
-        D[Store in DB<br/>encrypted_value]
-        E[Agent starts]
-        F[Backend decrypts]
-        G[Inject as env var<br/>PM2 environment]
-        H[Agent reads<br/>process.env.KEY]
-    end
-
-    A --> B
-    B --> C
-    C --> D
-    E --> F
-    F --> G
-    G --> H
-
-    style C fill:#ffebee
-    style D fill:#ffebee
-    style F fill:#e8f5e9
-```
-
-## 🔄 Deployment Flow
-
-```mermaid
-graph TD
-    A[Developer: git push] --> B[GitHub: Push Event]
-    B --> C[Backend: Webhook Received]
-    C --> D{Agent Exists?}
-    D -->|No| E[Deploy Agent Contract]
-    D -->|Yes| F[Update Existing]
-    E --> G[Get Contract Address]
-    F --> G
-    G --> H[Clone/Pull Repository]
-    H --> I[Install Dependencies]
-    I --> J[Load Secrets from DB]
-    J --> K[Decrypt Secrets]
-    K --> L[Start Agent Process PM2]
-    L --> M[Agent Running]
-    M --> N[Agent Makes Decisions]
-    N --> O[Execute Trades]
-    O --> P[Send Metrics to Backend]
-    P --> Q[Update Dashboard]
-```
-
 ## 📊 Database Schema
 
 ```mermaid
@@ -435,41 +385,6 @@ erDiagram
         float trade_amount
         datetime created_at
     }
-```
-
-## 🌐 Network Architecture
-
-```mermaid
-graph TB
-    subgraph "Internet"
-        DEV[Developer Machine]
-        GITHUB[GitHub.com]
-        RENDER[Render.com<br/>Backend Hosting]
-    end
-
-    subgraph "Mantle Sepolia Network"
-        RPC[Mantle RPC<br/>rpc.sepolia.mantle.xyz]
-        FACTORY[AgentFactory Contract]
-        AGENTS[Agent Contracts<br/>One per branch]
-        DEX_ROUTER[Uniswap V3 Router]
-    end
-
-    subgraph "External APIs"
-        GROQ[Groq API<br/>LLM Service]
-        COINGECKO[CoinGecko API<br/>Price Data]
-    end
-
-    DEV -->|git push| GITHUB
-    DEV -->|CLI commands| RENDER
-    GITHUB -->|Webhooks| RENDER
-    RENDER -->|Deploy contracts| RPC
-    RENDER -->|Query contracts| RPC
-    RPC --> FACTORY
-    FACTORY --> AGENTS
-    AGENTS --> DEX_ROUTER
-    
-    RENDER -->|AI requests| GROQ
-    RENDER -->|Price requests| COINGECKO
 ```
 
 ## 🎯 Key Data Flows
