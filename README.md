@@ -22,7 +22,7 @@ Thnk of it as **Vercel for On-chain Agents**. Deploy autonomous AI agents to Man
 ### Media & Documentation
 - **[Demo Video](#)** — Watch the platform in action
 - **[Pitch Video](#)** — Product pitch presentation
-- **[Pitch Deck](#)** — Presentation slides
+- **[Pitch Deck](https://www.canva.com/design/DAG-e0fPpHo/zISCphZMJLZ9s9XChzAR-w/view?utm_content=DAG-e0fPpHo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h81d5a0197d)** — Presentation slides
 
 ---
 
